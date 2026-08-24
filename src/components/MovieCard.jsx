@@ -1,5 +1,15 @@
 export default function MovieCard(props) {
-    const { title, poster, year, genre, rating, watched } = props;
+    const {
+        id,
+        title,
+        poster,
+        year,
+        genre,
+        rating,
+        watched,
+        onToggleWatched,
+        onDelete,
+    } = props;
 
     return (
         <div className="card bg-base-100 shadow-xl">
@@ -14,8 +24,11 @@ export default function MovieCard(props) {
             <div className="card-body">
                 <h2 className="card-title">
                     {title}
+
                     {rating >= 8 && (
-                        <span className="badge badge-warning">Top Rated</span>
+                        <span className="badge badge-warning">
+                            Top Rated
+                        </span>
                     )}
                 </h2>
 
@@ -28,15 +41,23 @@ export default function MovieCard(props) {
                 </p>
 
                 <div className="card-actions justify-end mt-2">
-                    {watched ? (
-                        <span className="badge badge-success">
-                            Watched ✓
-                        </span>
-                    ) : (
-                        <span className="badge badge-ghost">
-                            Unwatched
-                        </span>
-                    )}
+                    <button
+                        onClick={() => onToggleWatched(id)}
+                        className={
+                            watched
+                                ? "badge badge-success cursor-pointer"
+                                : "badge badge-ghost cursor-pointer"
+                        }
+                    >
+                        {watched ? "Watched ✓" : "Unwatched"}
+                    </button>
+
+                    <button
+                        onClick={() => onDelete(id)}
+                        className="btn btn-error btn-sm"
+                    >
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,17 +1,87 @@
+import { useState } from "react";
 import Layout from "./layouts/Layout";
 import MovieList from "./components/MovieList";
-import movies from "./data/movies";
+import AddMovieForm from "./components/AddMovieForm";
+import FilterBar from "./components/FilterBar";
+import SummaryBar from "./components/SummaryBar";
+import moviesData from "./data/movies";
 
 export default function App() {
-  return (
-    <Layout>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">My Watchlist</h1>
-        <p className="opacity-70">
-          A collection of movies I've watched and want to watch.
-        </p>
-      </div>
-      <MovieList movies={movies} />
-    </Layout>
-  );
+    const [movies, setMovies] = useState(moviesData);
+    const [filter, setFilter] = useState("all");
+
+    const handleToggleWatched = (id) => {
+        setMovies(
+            movies.map((movie) =>
+                movie.id === id
+                    ? { ...movie, watched: !movie.watched }
+                    : movie
+            )
+        );
+    };
+
+    const handleDeleteMovie = (id) => {
+        setMovies(
+            movies.filter((movie) => movie.id !== id)
+        );
+    };
+
+    const handleAddMovie = (newMovie) => {
+        setMovies([...movies, newMovie]);
+    };
+
+    const visibleMovies = movies.filter((movie) => {
+        if (filter === "watched") {
+            return movie.watched;
+        }
+
+        if (filter === "unwatched") {
+            return !movie.watched;
+        }
+
+        return true;
+    });
+
+    const totalMovies = movies.length;
+
+    const watchedMovies = movies.filter(
+        (movie) => movie.watched
+    ).length;
+
+    const unwatchedMovies = movies.filter(
+        (movie) => !movie.watched
+    ).length;
+
+    return (
+        <Layout>
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold">
+                    My Watchlist
+                </h1>
+
+                <p className="opacity-70">
+                    A collection of movies I've watched and want to watch.
+                </p>
+            </div>
+
+            <SummaryBar
+                total={totalMovies}
+                watched={watchedMovies}
+                unwatched={unwatchedMovies}
+            />
+
+            <AddMovieForm onAddMovie={handleAddMovie} />
+
+            <FilterBar
+                currentFilter={filter}
+                onChangeFilter={setFilter}
+            />
+
+            <MovieList
+                movies={visibleMovies}
+                onToggleWatched={handleToggleWatched}
+                onDelete={handleDeleteMovie}
+            />
+        </Layout>
+    );
 }
